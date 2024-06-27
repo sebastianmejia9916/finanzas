@@ -1,25 +1,49 @@
-<!-- finanzas/templates/finanzas/index.html -->
-
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Control de Finanzas Personales</title>
+    <title>Finanzas Personales</title>
 </head>
 <body>
-    <h1>Control de Finanzas Personales</h1>
+    <h1>Registro de Finanzas</h1>
 
-    <!-- Formulario de ingreso/gasto -->
+    <!-- Formulario para ingreso y gasto -->
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Registrar Transacción</button>
+        <button type="submit">Guardar</button>
     </form>
 
-    <!-- Mostrar balance financiero -->
-    <h2>Balance Financiero</h2>
-    <p>Ingresos Totales: {{ ingresos_totales }}</p>
-    <p>Gastos Totales: {{ gastos_totales }}</p>
+    <hr>
+
+    <!-- Mostrar ingresos totales y gastos totales -->
+    <h2>Resumen Financiero</h2>
+    <p>Ingresos totales: {{ ingresos_totales }}</p>
+    <p>Gastos totales: {{ gastos_totales }}</p>
     <p>Balance: {{ balance }}</p>
+
+    <hr>
+
+    <!-- Tabla dinámica de gastos -->
+    <h2>Últimos Gastos Registrados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for gasto in gastos %}
+            <tr>
+                <td>{{ gasto.descripcion }}</td>
+                <td>{{ gasto.valor }}</td>
+                <td>{{ gasto.fecha }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </body>
 </html>

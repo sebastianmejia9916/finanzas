@@ -10,17 +10,24 @@ def vista_principal(request):
         form = TransaccionForm(request.POST)
         if form.is_valid():
             form.save()
+            # Redirigir a la misma página para actualizar los cálculos
             return redirect('vista_principal')
     else:
         form = TransaccionForm()
 
-    # Calcular balance financiero
+    # Obtener todos los gastos para mostrar en la tabla
+    gastos = Transaccion.objects.filter(tipo='Gasto').order_by('-fecha')[:10]
+
+    # Calcular ingresos totales y gastos totales
     ingresos_totales = Transaccion.objects.filter(tipo='Ingreso').aggregate(total=models.Sum('valor'))['total'] or 0
     gastos_totales = Transaccion.objects.filter(tipo='Gasto').aggregate(total=models.Sum('valor'))['total'] or 0
     balance = ingresos_totales - gastos_totales
 
     context = {
         'form': form,
+        'gastos': gastos,
+        'ingresos_totales': ingresos_totales,
+        'gastos_totales': gastos_totales,
         'balance': balance,
     }
     return render(request, 'finanzas/index.html', context)
