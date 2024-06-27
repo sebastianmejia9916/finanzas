@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte Financiero</title>
+    <style>
+        /* Estilos CSS opcionales para la tabla y otros elementos */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reporte Financiero</h1>
+    <h3>Rango de Fechas: {{ fecha_inicio }} - {{ fecha_fin }}</h3>
+
+    <h2>Resumen Financiero</h2>
+    <p>Ingresos totales: {{ ingresos_totales }}</p>
+    <p>Gastos totales: {{ gastos_totales }}</p>
+    <p>Balance: {{ balance }}</p>
+
+    <hr>
+
+    <h2>Detalles de Ingresos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ingreso in ingresos %}
+            <tr>
+                <td>{{ ingreso.descripcion }}</td>
+                <td>{{ ingreso.valor }}</td>
+                <td>{{ ingreso.fecha }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>Detalles de Gastos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for gasto in gastos %}
+            <tr>
+                <td>{{ gasto.descripcion }}</td>
+                <td>{{ gasto.valor }}</td>
+                <td>{{ gasto.fecha }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

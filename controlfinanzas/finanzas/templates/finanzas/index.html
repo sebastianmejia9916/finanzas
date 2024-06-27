@@ -16,6 +16,14 @@
 
     <hr>
 
+    <!-- Botón para generar reporte -->
+<form action="{% url 'generar_reporte' %}" method="get">
+    {{ reporte_form.as_p }}
+    <button type="submit">Generar Reporte PDF</button>
+</form>
+
+<hr>
+
     <!-- Mostrar ingresos totales y gastos totales -->
     <h2>Resumen Financiero</h2>
     <p>Ingresos totales: {{ ingresos_totales }}</p>
@@ -44,6 +52,27 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Tabla dinámica de ingresos -->
+<h2>Últimos Ingresos Registrados</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Descripción</th>
+            <th>Valor</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ingreso in ingresos %}
+        <tr>
+            <td>{{ ingreso.descripcion }}</td>
+            <td>{{ ingreso.valor }}</td>
+            <td>{{ ingreso.fecha }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 </body>
 </html>
