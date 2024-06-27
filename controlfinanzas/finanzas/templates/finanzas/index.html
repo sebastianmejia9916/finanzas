@@ -4,9 +4,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Finanzas Personales</title>
+    <title>Control de Finanzas Personales</title>
 </head>
 <body>
-    <h1>Bienvenido a mi página de finanzas</h1>
+    <h1>Control de Finanzas Personales</h1>
+
+    <!-- Formulario de ingreso/gasto -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Registrar Transacción</button>
+    </form>
+
+    <!-- Mostrar balance financiero -->
+    <h2>Balance Financiero</h2>
+    <p>Ingresos Totales: {{ ingresos_totales }}</p>
+    <p>Gastos Totales: {{ gastos_totales }}</p>
+    <p>Balance: {{ balance }}</p>
 </body>
 </html>
