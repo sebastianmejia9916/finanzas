@@ -1,78 +1,86 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Finanzas Personales</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
 </head>
 <body>
-    <h1>Registro de Finanzas</h1>
+    <div class="container">
+        <header>
+            <h1>Control de Ingresos y Gastos</h1>
+        </header>
 
-    <!-- Formulario para ingreso y gasto -->
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar</button>
-    </form>
+        <section class="section">
+            <!-- Formulario para ingreso y gasto -->
+            <form method="post" class="form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Ingresar</button>
+            </form>
 
-    <hr>
+            <!-- Mostrar ingresos totales y gastos totales -->
+            <div class="resumen">
+                <h2>Resumen Financiero</h2>
+                <p>Ingresos totales: {{ ingresos_totales }}</p>
+                <p>Gastos totales: {{ gastos_totales }}</p>
+                <p>Balance: {{ balance }}</p>
+            </div>
+        </section>
 
-    <!-- Botón para generar reporte -->
-<form action="{% url 'generar_reporte' %}" method="get">
-    {{ reporte_form.as_p }}
-    <button type="submit">Generar Reporte PDF</button>
-</form>
+        
+            <!-- Tabla dinámica de ingresos -->
+            <h2>Ingresos Registrados</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Valor</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ingreso in ingresos %}
+                    <tr>
+                        <td>{{ ingreso.descripcion }}</td>
+                        <td>{{ ingreso.valor }}</td>
+                        <td>{{ ingreso.fecha }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
 
-<hr>
+        <section class="section">
+            <!-- Tabla dinámica de gastos -->
+            <h2>Gastos Registrados</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Valor</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gasto in gastos %}
+                    <tr>
+                        <td>{{ gasto.descripcion }}</td>
+                        <td>{{ gasto.valor }}</td>
+                        <td>{{ gasto.fecha }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-    <!-- Mostrar ingresos totales y gastos totales -->
-    <h2>Resumen Financiero</h2>
-    <p>Ingresos totales: {{ ingresos_totales }}</p>
-    <p>Gastos totales: {{ gastos_totales }}</p>
-    <p>Balance: {{ balance }}</p>
 
-    <hr>
-
-    <!-- Tabla dinámica de gastos -->
-    <h2>Últimos Gastos Registrados</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Descripción</th>
-                <th>Valor</th>
-                <th>Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for gasto in gastos %}
-            <tr>
-                <td>{{ gasto.descripcion }}</td>
-                <td>{{ gasto.valor }}</td>
-                <td>{{ gasto.fecha }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Tabla dinámica de ingresos -->
-<h2>Últimos Ingresos Registrados</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Descripción</th>
-            <th>Valor</th>
-            <th>Fecha</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ingreso in ingresos %}
-        <tr>
-            <td>{{ ingreso.descripcion }}</td>
-            <td>{{ ingreso.valor }}</td>
-            <td>{{ ingreso.fecha }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+        <footer class="footer">
+            <!-- Botón para generar reporte -->
+            <form action="{% url 'generar_reporte' %}" method="get" class="form">
+                {{ reporte_form.as_p }}
+                <button type="submit">Generar Reporte</button>
+            </form>
+        </footer>
+    </div>
 </body>
 </html>

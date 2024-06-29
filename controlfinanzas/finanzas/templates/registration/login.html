@@ -5,9 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Iniciar Sesión</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/login.css' %}">
+
 </head>
 <body>
-    <h2>Iniciar Sesión</h2>
+    <h2></h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
