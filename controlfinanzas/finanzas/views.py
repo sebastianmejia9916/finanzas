@@ -15,14 +15,40 @@ def vista_principal(request):
     form = TransaccionForm(request.POST or None)
     reporte_form = ReporteForm(request.GET or None)
 
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        return redirect('vista_principal')
+    if request.method == 'POST':
+        if 'reset_totals' in request.POST:
+            # Reiniciar totales de ingresos y gastos
+            Transaccion.objects.all().delete()  # Elimina todos los registros de Transaccion
+            ingresos_totales = 0
+            gastos_totales = 0
+            balance = 0
 
-    # Calcular balance financiero
+            context = {
+                'form': form,
+                'balance': balance,
+                'ingresos_totales': ingresos_totales,
+                'gastos_totales': gastos_totales,
+                'ingresos': [],
+                'gastos': [],
+                'reporte_form': reporte_form,
+            }
+            return render(request, 'finanzas/index.html', context)
+        else:
+            form.save()
+            return redirect('vista_principal')
+
+    # Calcular totales de ingresos y gastos
     ingresos_totales = Transaccion.objects.filter(tipo='Ingreso').aggregate(total=models.Sum('valor'))['total'] or 0
     gastos_totales = Transaccion.objects.filter(tipo='Gasto').aggregate(total=models.Sum('valor'))['total'] or 0
     balance = ingresos_totales - gastos_totales
+
+    # Determinar el estado del balance
+    if balance < 0:
+        estado_balance = 'Negativo'
+    elif balance > 0:
+        estado_balance = 'Positivo'
+    else:
+        estado_balance = 'Neutral'
 
     # Obtener los últimos ingresos y gastos para mostrar
     ingresos = Transaccion.objects.filter(tipo='Ingreso').order_by('-fecha')[:5]
@@ -31,14 +57,14 @@ def vista_principal(request):
     context = {
         'form': form,
         'balance': balance,
+        'estado_balance': estado_balance,
         'ingresos_totales': ingresos_totales,
         'gastos_totales': gastos_totales,
         'ingresos': ingresos,
         'gastos': gastos,
-        'reporte_form': reporte_form,  # Añade el formulario de reporte al contexto
+        'reporte_form': reporte_form,
     }
     return render(request, 'finanzas/index.html', context)
-
 
 
 class ReporteExcel(View):
