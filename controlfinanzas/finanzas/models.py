@@ -8,8 +8,11 @@ class Transaccion(models.Model):
 
     tipo = models.CharField(max_length=10, choices=TIPOS_CHOICES)
     descripcion = models.CharField(max_length=100)
-    valor = models.DecimalField(max_digits=10, decimal_places=3)
+    valor = models.DecimalField(max_digits=13, decimal_places=3)
     fecha = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.tipo} - {self.descripcion} - {self.valor} - {self.fecha}"
+        return f"{self.tipo} - {self.descripcion} - {self.valor_formateado()} - {self.fecha}"
+
+    def valor_formateado(self):
+        return '{:,.3f}'.format(self.valor)

@@ -20,11 +20,12 @@
             </form>
 
             <!-- Mostrar ingresos totales y gastos totales -->
+            {% load custom_filters %}
             <div class="resumen">
                 <h2>Resumen Financiero</h2>
-                <p>Ingresos totales: {{ ingresos_totales }}</p>
+                <p>Ingresos totales: {{ ingresos_totales|thousand_separator }}</p>
                 <p>Gastos totales: {{ gastos_totales }}</p>
-                <p>Balance: {{ balance }}</p>
+                <p>Balance: {{ balance|thousand_separator }}</p
             </div>
         </section>
 
