@@ -89,6 +89,11 @@
             {% csrf_token %}
             <button type="submit" name="reset_totals">Reiniciar Totales</button>
         </form>
+        <br>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Cerrar sesión</button>
+        </form>
     </div>
 </body>
 </html>

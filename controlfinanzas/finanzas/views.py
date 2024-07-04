@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import TransaccionForm
-from .models import Transaccion  
-from django.db import models 
+from .models import Transaccion
+from django.db import models
 from wkhtmltopdf.views import PDFTemplateResponse
 from django.template.loader import get_template
 from django.views.generic import View
@@ -17,8 +17,8 @@ def vista_principal(request):
 
     if request.method == 'POST':
         if 'reset_totals' in request.POST:
-            # Reiniciar totales de ingresos y gastos
-            Transaccion.objects.all().delete()  # Elimina todos los registros de Transaccion
+            # Reiniciar totales de ingresos y gastos del usuario actual
+            Transaccion.objects.filter(usuario=request.user).delete()  # Elimina todos los registros de Transaccion del usuario actual
             ingresos_totales = 0
             gastos_totales = 0
             balance = 0
@@ -34,12 +34,14 @@ def vista_principal(request):
             }
             return render(request, 'finanzas/index.html', context)
         else:
-            form.save()
+            transaccion = form.save(commit=False)
+            transaccion.usuario = request.user
+            transaccion.save()
             return redirect('vista_principal')
 
-    # Calcular totales de ingresos y gastos
-    ingresos_totales = Transaccion.objects.filter(tipo='Ingreso').aggregate(total=models.Sum('valor'))['total'] or 0
-    gastos_totales = Transaccion.objects.filter(tipo='Gasto').aggregate(total=models.Sum('valor'))['total'] or 0
+    # Calcular totales de ingresos y gastos del usuario actual
+    ingresos_totales = Transaccion.objects.filter(tipo='Ingreso', usuario=request.user).aggregate(total=models.Sum('valor'))['total'] or 0
+    gastos_totales = Transaccion.objects.filter(tipo='Gasto', usuario=request.user).aggregate(total=models.Sum('valor'))['total'] or 0
     balance = ingresos_totales - gastos_totales
 
     # Determinar el estado del balance
@@ -50,9 +52,9 @@ def vista_principal(request):
     else:
         estado_balance = 'Neutral'
 
-    # Obtener los últimos ingresos y gastos para mostrar
-    ingresos = Transaccion.objects.filter(tipo='Ingreso').order_by('-fecha')[:5]
-    gastos = Transaccion.objects.filter(tipo='Gasto').order_by('-fecha')[:5]
+    # Obtener los últimos ingresos y gastos para mostrar del usuario actual
+    ingresos = Transaccion.objects.filter(tipo='Ingreso', usuario=request.user).order_by('-fecha')[:5]
+    gastos = Transaccion.objects.filter(tipo='Gasto', usuario=request.user).order_by('-fecha')[:5]
 
     context = {
         'form': form,
@@ -66,7 +68,6 @@ def vista_principal(request):
     }
     return render(request, 'finanzas/index.html', context)
 
-
 class ReporteExcel(View):
     def get(self, request, *args, **kwargs):
         # Obtener las fechas del formulario de reporte
@@ -75,9 +76,9 @@ class ReporteExcel(View):
             fecha_inicio = reporte_form.cleaned_data['fecha_inicio']
             fecha_fin = reporte_form.cleaned_data['fecha_fin']
 
-            # Obtener datos de ingresos y gastos en el rango de fechas
-            ingresos = Transaccion.objects.filter(tipo='Ingreso', fecha__range=[fecha_inicio, fecha_fin])
-            gastos = Transaccion.objects.filter(tipo='Gasto', fecha__range=[fecha_inicio, fecha_fin])
+            # Obtener datos de ingresos y gastos en el rango de fechas para el usuario actual
+            ingresos = Transaccion.objects.filter(tipo='Ingreso', usuario=request.user, fecha__range=[fecha_inicio, fecha_fin])
+            gastos = Transaccion.objects.filter(tipo='Gasto', usuario=request.user, fecha__range=[fecha_inicio, fecha_fin])
 
             # Crear un nuevo libro de Excel y una hoja de cálculo
             wb = openpyxl.Workbook()
